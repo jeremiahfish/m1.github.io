@@ -353,7 +353,7 @@ bodyb {
 
 <div id="fluke">
 
-    <div id="meter" class='lcd'>0.0</div>
+    <div id="meter" class='lcd'>40.0</div>
 </div>
     
 
@@ -471,6 +471,9 @@ function enableAutoZero(e){
   var zeroLastVal = zero.value
 
   zero.addEventListener('knob-move-change', (e) => {
+
+    
+    span.value = 200
         v.zero_manual = true
     
       
@@ -550,6 +553,8 @@ function enableAutospan(e){
   var spanLastVal = span.value
 
   span.addEventListener('knob-move-change', (e) => {
+
+        zero.value = 40
         v.span_manual = true
         document.getElementById('meter').innerHTML = Number.parseFloat(span.value).toFixed(1);
 
@@ -632,7 +637,7 @@ function changeMode(e){
           else if( v.mode == 3 ){
             mode.classList.add('pressed')
             modePressTimer = setTimeout(function() {
-              
+              clearInterval(calInterval)
                   v.mode = 0
                   setMode(v.mode) 
                   reset()
@@ -653,7 +658,7 @@ mode.addEventListener('knob-move-change', (e) => {
       
   
     if(v.mode == 0 ){
-      document.getElementById('meter').innerHTML = 0.0
+      document.getElementById('meter').innerHTML = 40.0
     }
   
     if(v.mode == 1 ){
@@ -670,7 +675,7 @@ mode.addEventListener('knob-move-change', (e) => {
 
     }
     if(v.mode == 3 ){
-      document.getElementById('meter').innerHTML = 0.0
+      document.getElementById('meter').innerHTML = 40.0
     }
   
       mode.classList.remove('pressed')
@@ -691,6 +696,9 @@ function reset(){
   v.zero =  40 
   v.zero_manual =  false 
   v.zero_auto =  0 
+
+  zero.value = 40
+  span.value = 200
 
   document.getElementById("r1Yellow").classList.add('off');
   document.getElementById("r2Yellow").classList.add('off');
@@ -772,7 +780,7 @@ setTimeout(function(){
 
     }
     else {
-      document.getElementById('meter').innerHTML = 0.0
+      document.getElementById('meter').innerHTML = 40.0
     }
 
     
