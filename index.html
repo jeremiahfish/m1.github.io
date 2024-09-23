@@ -344,7 +344,7 @@ bodyb {
 
       <!-- Zero Knob -->
       <div style="margin-top: 20px; margin-left: 490px;">
-        <input-knob id="zero-knob"   name="zero-knob" value=30 scale=30 min=0 max=60>
+        <input-knob id="zero-knob"   name="zero-knob" value="30" scale="10" min="0" max="60">
           <div class="mark">&bull;</div>
         </input-knob>
       </div>
@@ -473,23 +473,11 @@ function enableAutoZero(e){
 
   zero.addEventListener('knob-move-change', (e) => {
         v.zero_manual = true
-        if( zeroLastVal < zero.value ){
-            v.zero  += 0.1
-        } else {
-            v.zero -= 0.1
-        }
-        /*
-        if( v.zero < v.zero_min )   v.zero = v.zero_min;
-        if( v.zero > v.zero_max )   v.zero = v.zero_max;
-        
-        if ( zero.value == 0 || zero.value == 60 ){
-            zero.value = 30
-            zeroLastVal = zero.value
-        }
-            */
-
-            zeroLastVal = zero.value
-        document.getElementById('meter').innerHTML = Number.parseFloat(v.zero).toFixed(1);
+    
+      
+              
+          document.getElementById('meter').innerHTML = Number.parseFloat(zero.value).toFixed(1);
+     
     
         zero.classList.remove('pressed')
     clearTimeout(zeroPressTimer);
@@ -564,23 +552,8 @@ function enableAutospan(e){
 
   span.addEventListener('knob-move-change', (e) => {
         v.span_manual = true
-        if( spanLastVal < span.value ){
-            v.span  += 0.1
-        } else {
-            v.span -= 0.1
-        }
-        /*
-        if( v.span < v.span_min )   v.span = v.span_min;
-        if( v.span > v.span_max )   v.span = v.span_max;
-        
-        if ( span.value == 0 || span.value == 60 ){
-            span.value = 30
-            spanLastVal = span.value
-        }
-        */
+        document.getElementById('meter').innerHTML = Number.parseFloat(span.value).toFixed(1);
 
-        spanLastVal = span.value
-        document.getElementById('meter').innerHTML = Number.parseFloat(v.span).toFixed(1);
     
         span.classList.remove('pressed')
     clearTimeout(spanPressTimer);
