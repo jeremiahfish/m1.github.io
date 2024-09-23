@@ -336,7 +336,7 @@ bodyb {
 
       <!-- Span Knob -->
       <div style="margin-top: 182px; margin-left: 490px;">
-        <input-knob id="span-knob"   name="span-knob" value=220 scale="10" min=0 max=240>
+        <input-knob id="span-knob"   name="span-knob" value=220 scale=10 min=0 max=240>
           <div class="mark">&bull;</div>
         </input-knob>
       </div>
@@ -344,7 +344,7 @@ bodyb {
 
       <!-- Zero Knob -->
       <div style="margin-top: 20px; margin-left: 490px;">
-        <input-knob id="zero-knob"   name="zero-knob" value="30" scale="30" min="0" max="60">
+        <input-knob id="zero-knob"   name="zero-knob" value=30 scale=30 min=0 max=60>
           <div class="mark">&bull;</div>
         </input-knob>
       </div>
@@ -478,6 +478,7 @@ function enableAutoZero(e){
         } else {
             v.zero -= 0.1
         }
+        /*
         if( v.zero < v.zero_min )   v.zero = v.zero_min;
         if( v.zero > v.zero_max )   v.zero = v.zero_max;
         
@@ -485,6 +486,9 @@ function enableAutoZero(e){
             zero.value = 30
             zeroLastVal = zero.value
         }
+            */
+
+            zeroLastVal = zero.value
         document.getElementById('meter').innerHTML = Number.parseFloat(v.zero).toFixed(1);
     
         zero.classList.remove('pressed')
@@ -565,6 +569,7 @@ function enableAutospan(e){
         } else {
             v.span -= 0.1
         }
+        /*
         if( v.span < v.span_min )   v.span = v.span_min;
         if( v.span > v.span_max )   v.span = v.span_max;
         
@@ -572,7 +577,9 @@ function enableAutospan(e){
             span.value = 30
             spanLastVal = span.value
         }
+        */
 
+        spanLastVal = span.value
         document.getElementById('meter').innerHTML = Number.parseFloat(v.span).toFixed(1);
     
         span.classList.remove('pressed')
