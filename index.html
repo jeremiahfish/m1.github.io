@@ -1,0 +1,745 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+
+  <meta name="viewport" content="user-scalable=no, width=device-width">
+
+  <script>
+
+! function(t, e) {
+    "object" == typeof exports && "undefined" != typeof module ? module.exports = e() : "function" == typeof define && define.amd ? define(e) : (t = "undefined" != typeof globalThis ? globalThis : t || self).inputKnob = e()
+}(this, (function() {
+    "use strict";
+    const t = document.createElement("template");
+    t.innerHTML = '\n  <style>\n    :host {\n      display: inline-block;\n      -khtml-user-select: none;\n      -moz-user-select: none;\n      -ms-user-select: none;\n      -webkit-tap-highlight-color: transparent;\n      -webkit-touch-callout: none;\n      -webkit-user-select: none;\n      touch-action: none;\n      user-select: none;\n      \n    }\n    #rotator {\n      display: block;\n      --angle: 0rad;\n      transform: rotate(var(--angle));\n      will-change: transform;\n      height: 100%;\n      width: 100%;\n    }\n  </style>\n  <div id="rotator" part="rotator"><slot></slot></div>', window.ShadyCSS && ShadyCSS.prepareTemplate(t, "input-knob");
+    const e = 2 * Math.PI;
+    class n extends HTMLElement {
+        constructor() {
+            super(), window.ShadyCSS && ShadyCSS.styleElement(this), this.attachShadow({
+                mode: "open"
+            }), this.shadowRoot.appendChild(t.content.cloneNode(!0)), this._rotator = this.shadowRoot.getElementById("rotator"), this._fallback = null, this._drawState = this._drawState.bind(this), this._onMousedown = this._onMousedown.bind(this), this._onMousemove = this._onMousemove.bind(this), this._onMouseup = this._onMouseup.bind(this), this._onPointerdown = this._onPointerdown.bind(this), this._onPointermove = this._onPointermove.bind(this), this._onPointerup = this._onPointerup.bind(this), this._onTouchend = this._onTouchend.bind(this), this._onTouchmove = this._onTouchmove.bind(this), this._onTouchstart = this._onTouchstart.bind(this), this._rotationStart = this._rotationStart.bind(this), this._rotationChange = this._rotationChange.bind(this), this._rotationEnd = this._rotationEnd.bind(this)
+        }
+        static get observedAttributes() {
+            return ["value", "scale", "min", "max"]
+        }
+        get value() {
+            return this.hasAttribute("value") ? this.getAttribute("value") : 0
+        }
+        set value(t) {
+            this.setAttribute("value", parseFloat(t))
+        }
+        get scale() {
+            return this.hasAttribute("scale") ? this.getAttribute("scale") : 1
+        }
+        set scale(t) {
+            this.setAttribute("scale", parseFloat(t))
+        }
+        get min() {
+            return this.hasAttribute("min") ? this.getAttribute("min") : null
+        }
+        set min(t) {
+            this.setAttribute("min", parseFloat(t))
+        }
+        get max() {
+            return this.hasAttribute("max") ? this.getAttribute("max") : null
+        }
+        set max(t) {
+            this.setAttribute("max", parseFloat(t))
+        }
+        connectedCallback() {
+            if (!this._rotator.part) {
+                for (this._fallback = document.createElement("span"), this._fallback.style.setProperty("--angle", `${this._angle}rad`), this._fallback.style.setProperty("transform", "rotate(var(--angle))"), this._fallback.style.setProperty("-webkit-tap-highlight-color", "transparent"); this.childNodes.length > 0;) this._fallback.appendChild(this.childNodes[0]);
+                this._fallback.classList.add("fallback"), this.classList.add("fallback"), this.append(this._fallback)
+            }
+            this._drawState(), "PointerEvent" in window ? this.addEventListener("pointerdown", this._onPointerdown) : (this.addEventListener("touchstart", this._onTouchstart), this.addEventListener("mousedown", this._onMousedown))
+        }
+        disconnectedCallback() {
+            "PointerEvent" in window ? this.removeEventListener("pointerdown", this._onPointerdown) : (this.removeEventListener("touchstart", this._onTouchstart), this.removeEventListener("mousedown", this._onMousedown))
+        }
+        attributeChangedCallback(t, n, i) {
+            this._angle = e / this.scale * (this.value % this.scale), this._rotations = Math.floor(this.value / this.scale), this._drawState()
+        }
+        _drawState() {
+            let t = this._rotator;
+            null !== this._fallback && (t = this._fallback), t.style.setProperty("--angle", `${this._angle}rad`)
+        }
+        _rotationStart() {
+            window.oncontextmenu = () => !1, this._centerX = this.offsetLeft - this.scrollLeft + this.clientLeft + this.offsetWidth / 2, this._centerY = this.offsetTop - this.scrollTop + this.clientTop + this.offsetHeight / 2, this._initialAngle = this._angle, this._attemptedAngle = this._angle, this._attemptedRotations = this._rotations, this._initialTouchAngle = Math.atan2(this._touchY - this._centerY, this._touchX - this._centerX);
+            const t = new Event("knob-move-start", {
+                bubbles: !0
+            });
+            this.dispatchEvent(t)
+        }
+        _rotationChange() {
+            this._previousAttemptedAngle = this._attemptedAngle, 
+            this._attemptedAngle = this._initialAngle - this._initialTouchAngle + Math.atan2(this._touchY - this._centerY, this._touchX - this._centerX), 
+            this._attemptedAngle = (this._attemptedAngle + e) % e, 
+            null !== this.max && null !== this.min && (this._attemptedAngle < 1.57 && this._previousAttemptedAngle > 4.71 ? this._attemptedRotations++ : this._previousAttemptedAngle < 1.57 && this._attemptedAngle > 4.71 && this._attemptedRotations--), 
+            this._attemptedValue = this._attemptedAngle / (e / this.scale) + this.scale * this._attemptedRotations, (null === this.min || this._attemptedValue >= this.min) && (null === this.max || this._attemptedValue <= this.max) ? (this._angle = this._attemptedAngle, 
+            this._rotations = this._attemptedRotations, 
+            this.value = this._attemptedValue) : this._attemptedValue < this.min ? this.value = this.min : this._attemptedValue > this.max && (this.value = this.max);
+            //this.value = this._attemptedValue) : this._attemptedValue < this.min ? this.value = this._attemptedValue : this._attemptedValue > this.max && (this.value = this._attemptedValue);
+
+            const t = new Event("knob-move-change", {
+                bubbles: !0
+            });
+            this.dispatchEvent(t)
+        }
+        _rotationEnd() {
+            window.oncontextmenu = null;
+            const t = new Event("knob-move-end", {
+                bubbles: !0
+            });
+            this.dispatchEvent(t)
+        }
+        _onPointerdown(t) {
+          if (t.button !== 2) { t.preventDefault()}
+            this._touchX = t.clientX, this._touchY = t.clientY, this._rotationStart(), this.setPointerCapture(t.pointerId), this.addEventListener("pointermove", this._onPointermove), this.addEventListener("pointerup", this._onPointerup), this.addEventListener("pointercancel", this._onPointerup)
+        }
+        _onPointermove(t) {
+            t.preventDefault(), this._touchX = t.clientX, this._touchY = t.clientY, this._rotationChange()
+        }
+        _onPointerup(t) {
+            t.preventDefault(), this._rotationEnd(), this.releasePointerCapture(t.pointerId), this.removeEventListener("pointermove", this._onPointermove), this.removeEventListener("pointerup", this._onPointerup), this.removeEventListener("pointercancel", this._onPointerup)
+        }
+        _onMousedown(t) {
+            this._touchX = t.clientX, this._touchY = t.clientY, this._rotationStart(), document.addEventListener("mousemove", this._onMousemove), document.addEventListener("mouseup", this._onMouseup)
+        }
+        _onMousemove(t) {
+            t.preventDefault(), this._touchX = t.clientX, this._touchY = t.clientY, this._rotationChange()
+        }
+        _onMouseup(t) {
+            t.preventDefault(), document.removeEventListener("mousemove", this._onMousemove), document.removeEventListener("mouseup", this._onMouseup), this._rotationEnd()
+        }
+        _onTouchstart(t) {
+            if (t.button !== 2) { t.preventDefault()}
+            this._touchX = t.changedTouches[0].clientX, this._touchY = t.changedTouches[0].clientY, this._rotationStart(), this.addEventListener("touchmove", this._onTouchmove), this.addEventListener("touchend", this._onTouchend), this.addEventListener("touchcancel", this._onTouchend)
+        }
+        _onTouchmove(t) {
+            t.preventDefault(), this._touchX = t.targetTouches[0].clientX, this._touchY = t.targetTouches[0].clientY, this._rotationChange()
+        }
+        _onTouchend(t) {
+            t.preventDefault(), this.removeEventListener("touchmove", this._onTouchmove), this.removeEventListener("touchend", this._onTouchend), this.removeEventListener("touchcancel", this._onTouchend), this._rotationEnd()
+        }
+    }
+    return customElements.define("input-knob", n), n
+}));
+
+
+  </script>
+
+
+
+<style>
+
+bodyb {
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCI+CjxwYXRoIGZpbGw9IiNmZjZmMDIiIGQ9Ik0zMSA3LjAwMmwxMyAxLjY4NkwzMy4yOTYgMTkgMzEgNy4wMDJ6TTE3IDQxTDQgMzkuMzE0IDE0LjcwNCAyOSAxNyA0MXoiPjwvcGF0aD48cGF0aCBmaWxsPSIjZmY2ZjAwIiBkPSJNOCAyNGMwLTguODM3IDcuMTYzLTE2IDE2LTE2IDEuMDI0IDAgMi4wMjEuMTA2IDIuOTkyLjI5bC42OTMtMy44NjVDMjYuNTI1IDQuMTEyIDI1LjI2MiA0LjAwNSAyNCA0LjAwNWMtMTEuMDUzIDAtMjAgOC45NDctMjAgMjAgMCA0Ljg0NCAxLjY4NiA5LjQ3NCA0Ljg0NCAxMy4wNTFsMy4wMzctMi42MjlDOS40NjggMzEuNjI1IDggMjcuOTg3IDggMjR6TTM5LjQ3MyAxMS4yNjdsLTMuMTQzIDIuNTM3QzM4LjYyMiAxNi41NzIgNDAgMjAuMTI1IDQwIDI0YzAgOC44MzctNy4xNjMgMTYtMTYgMTYtMS4wMjkgMC0yLjAzMy0uMTA2LTMuMDA4LS4yOTJsLS42NzYgMy43NzFjMS4yNjIuMjEgMi41MjUuMzE3IDMuNjg0LjMxNyAxMS4wNTMgMCAyMC04Ljk0NyAyMC0yMEM0NCAxOS4zNzUgNDIuNDIxIDE0Ljg0OCAzOS40NzMgMTEuMjY3eiI+PC9wYXRoPgo8L3N2Zz4=") 16 16, pointer;
+
+}
+
+
+
+
+@font-face {
+    font-family: seg;
+    src: url("seg.otf") format("opentype");
+}
+
+#fluke {
+    background-image: url('fluke.png');
+    background-size:cover;
+    background-repeat: no-repeat;
+    
+    position: absolute;
+    top: 400px;
+    left: 100px;
+
+    
+    width: 400px;
+    height: 600px;
+
+}
+.lcd {
+    position: absolute;
+    top: 110px;
+    left:0;
+    right: 0;
+    margin: auto;
+    font-family: seg;
+    background-image: linear-gradient(170deg,    hsl(80, 12%, 90%) 0%,    hsl(80, 8%, 78%) 100%  );
+   padding: 15px 20px;
+    border: 1px solid #333;
+    border-radius: 2px;
+    font-size: 54px;
+    width: 150px;
+    height: 87px;
+    overflow: hidden;
+    text-align: right;
+}
+
+
+
+
+
+
+   input-knob {
+    width: 64px;
+    padding: 0px;
+
+    background: transparent;
+    transition: scale 0.2s ease-out;
+    transition-delay: 0.0s;
+  }
+  input-knob.pressed {
+
+    scale: 0.9;
+
+  }
+
+
+
+
+
+
+  input-knob::part(rotator) {
+    box-sizing: border-box;
+    background-image: radial-gradient(circle at 50% 50%, #7a7a7a, #6b6b6b), radial-gradient(circle at 50% 53%, #ffffff, #ffffff00),
+    radial-gradient(ellipse at center,  rgba(255,255,255,0) 1%,rgba(255,255,255,0) 42%,rgba(255,255,255,1) 43%,rgba(255,255,255,0) 46%,rgba(255,255,255,0) 100%);
+    border: 1.5px dashed rgb(81, 81, 81);
+    outline: 2px solid rgb(74, 74, 74);
+    border-radius: 100%;
+    width: 64px;
+    height: 64px;
+  }
+
+  .mark {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    font: bold 120% monospace;
+    color: rgb(214, 214, 214);
+  }
+
+
+   
+   .device {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+ 
+        width: 568px;
+        height: 646px;
+
+        background-image: url('m1.png');
+        background-size:contain;
+        background-repeat: no-repeat;
+      
+        border-radius: 3px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        padding: 20px;
+    }
+
+   .led {
+     position: absolute;
+     display: block;
+     z-index: 10;
+     margin: 0;
+     padding: 0;
+
+     background-position: 50% 50%;
+     background-size: 100%;
+     width:  22px;
+     height: 22px;
+     transition: all 0.3s ease-out;
+   }
+
+   .led.green {
+        background-image: url('green.png');
+   }
+   .led.yellow {
+        background-image: url('yellow.png');
+    }
+   .led.red {
+        background-image: url('red.png');
+   }
+   .led.off {
+        filter: saturate(60%) brightness(50%);
+   }
+   /*1 time per second (1Hz, 50%)	500ms on / 500ms off */
+  .blink-1hz {
+    animation: blinker 1s linear infinite;
+  }
+  /* 2 times per second (0.5Hz, 50%) */
+  .blink-0_5hz {
+    animation: blinker 0.5s linear infinite;
+  }
+  /* 5 times per second (5Hz, 50%)  */
+  .blink-5hz {
+    animation: blinker .2s linear infinite;
+  }
+
+  @keyframes blinker {
+    0% {
+      filter: saturate(100%) brightness(100%);
+    }
+    49% {
+      filter: saturate(100%) brightness(100%);
+    }
+    50% {
+      filter: saturate(60%) brightness(50%);
+    }
+    100% {
+      filter: saturate(60%) brightness(50%);
+    }
+  }
+
+
+
+
+   </style>
+
+  <script src="http://jherrm.com/knobs/Knob.js"></script>
+</head>
+<body style="position: absolute; top: 0px; left: 0px; height: 100vh; width: 100vw;">
+
+
+
+    <div id="device" class="device">
+
+
+      
+
+
+      <div id="ledPower"  class="led green off"   style="top: 235px; left: 370px;" onclick="this.classList.toggle('off');"></div>
+      <div id="ledStatus" class="led yellow off"  style="top: 235px; left: 325px;" onclick="this.classList.toggle('off');"></div>
+      <div id="ledFault"  class="led yellow off"  style="top: 235px; left: 280px;" onclick="this.classList.toggle('off');"></div>
+
+
+      <div id="r1Yellow"  class="led yellow off"  style="top: 73px; left: 295px;" onclick="this.classList.toggle('off');"></div>
+      <div id="r1Red"     class="led red off"     style="top: 73px; left: 330px;" onclick="this.classList.toggle('off');"></div>
+        
+      <div id="r2Yellow"  class="led yellow off"  style="top: 170px; left: 295px;" onclick="this.classList.toggle('off');"></div>
+      <div id="r2Red"     class="led red off"     style="top: 170px; left: 330px;" onclick="this.classList.toggle('off');"></div>
+
+
+      <div id="ledSpan"  class="led yellow off"  style="top: 312px; left: 460px;" onclick="this.classList.toggle('off');"></div>
+      <div id="ledZero"  class="led yellow off"  style="top: 397px; left: 460px;" onclick="this.classList.toggle('off');"></div>
+      
+      
+      <!-- Mode Knob -->
+      <div style="margin-top: 24px; margin-left: 160px;">
+        <input-knob id="mode-knob"   name="mode-knob"  value="40" scale="30" min="40" max="200">
+          <div class="mark">&bull;</div>
+        </input-knob>
+      </div>
+
+
+      <!-- Span Knob -->
+      <div style="margin-top: 182px; margin-left: 490px;">
+        <input-knob id="span-knob"   name="span-knob" value=220 scale="10" min=0 max=240>
+          <div class="mark">&bull;</div>
+        </input-knob>
+      </div>
+
+
+      <!-- Zero Knob -->
+      <div style="margin-top: 20px; margin-left: 490px;">
+        <input-knob id="zero-knob"   name="zero-knob" value="30" scale="30" min="0" max="60">
+          <div class="mark">&bull;</div>
+        </input-knob>
+      </div>
+
+    </div>
+  
+
+<div id="fluke">
+
+    <div id="meter" class='lcd'>0.0</div>
+</div>
+    
+
+
+
+  <script type="text/javascript">
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("contextmenu", function (e) {
+        e.preventDefault();  // Prevent default context menu from showing up
+    });
+});
+
+
+
+// knob has 30 click at 0.1 per turn
+let v = {
+  mode: 0,
+  zero_manual: false,
+  zero_auto: 0,
+  zero_min: 0,
+  zero_max: 5,
+  span: 200,
+  span_manual: false,
+  span_auto: 0,
+  span_min: 0,
+  span_max: 240,
+  zero: 40,
+  zero_manual: false,
+  zero_auto: 0,
+  zero_min: 35,
+  zero_max: 45,
+  relay1: 40,
+  relay2: 40,
+}
+const mode = document.querySelector('#mode-knob');
+mode.value = 0;
+
+const span = document.querySelector('#span-knob');
+span.value = 220;
+
+const zero = document.querySelector('#zero-knob');
+zero.value = 35;
+
+
+/*
+knob-move-start: fired on initial touch or click.
+knob-move-change: fired repeatedly for each change in rotation.
+knob-move-end: fired when the touch or click is released.
+*/
+  
+
+//----------------------------------------------
+// Zero
+//----------------------------------------------
+var zeroPressTimer;
+var zeroIsAdjusting = false
+zero.addEventListener('knob-move-start', (e) => {})
+zero.addEventListener('knob-move-end', (e) => {
+  v.zero_manual = false
+  clearTimeout(zeroPressTimer)
+})
+zero.addEventListener('mouseup', (e) => {zero.classList.remove('pressed')})
+zero.addEventListener('touchend', (e) => {zero.classList.remove('pressed')})
+zero.addEventListener('mousedown',enableAutoZero);
+zero.addEventListener('touchstart',enableAutoZero);
+
+function enableAutoZero(e){
+  if (e.button === 2) {
+    e.preventDefault()
+
+    if( v.zero_manual == false) {
+        if( v.zero_auto == 0 ){
+            zero.classList.add('pressed')
+            zeroPressTimer = setTimeout(function() {
+                document.getElementById("ledZero").classList.remove('off');
+                document.getElementById("ledZero").classList.add('blink-5hz');
+                v.zero_auto = 1
+                clearTimeout(zeroPressTimer)
+            },  3000)
+        }
+
+        if( v.zero_auto == 1 ){
+            zero.classList.add('pressed')
+            zeroPressTimer = setTimeout(function() {
+                document.getElementById("ledZero").classList.remove('off');
+                document.getElementById("ledZero").classList.remove('blink-5hz');
+                document.getElementById("ledZero").classList.add('blink-0_5hz');
+                v.zero_auto = 2
+                clearTimeout(zeroPressTimer)
+            },  100)
+        }
+
+        if( v.zero_auto == 2 ){
+            zero.classList.add('pressed')
+            zeroPressTimer = setTimeout(function() {
+                document.getElementById("ledZero").classList.add('off');
+                document.getElementById("ledZero").classList.remove('blink-5hz');
+                document.getElementById("ledZero").classList.remove('blink-0_5hz');
+                v.zero_auto = 0
+                clearTimeout(zeroPressTimer)
+            },  100)
+        }
+    }
+  }
+
+}
+
+
+  var zeroLastVal = zero.value
+
+  zero.addEventListener('knob-move-change', (e) => {
+        v.zero_manual = true
+        if( zeroLastVal < zero.value ){
+            v.zero  += 0.1
+        } else {
+            v.zero -= 0.1
+        }
+        if( v.zero < v.zero_min )   v.zero = v.zero_min;
+        if( v.zero > v.zero_max )   v.zero = v.zero_max;
+        
+        if ( zero.value == 0 || zero.value == 60 ){
+            zero.value = 30
+            zeroLastVal = zero.value
+        }
+        document.getElementById('meter').innerHTML = Number.parseFloat(v.zero).toFixed(1);
+    
+        zero.classList.remove('pressed')
+    clearTimeout(zeroPressTimer);
+  })
+
+
+
+  //----------------------------------------------
+  // Span
+  //----------------------------------------------
+  var spanPressTimer;
+  var spanIsAdjusting = false
+
+  span.addEventListener('knob-move-start', (e) => {})
+
+  span.addEventListener('knob-move-end', (e) => {
+    v.span_manual = false
+    clearTimeout(spanPressTimer)
+  })
+
+  span.addEventListener('mouseup', (e) => {span.classList.remove('pressed')})
+  span.addEventListener('touchend', (e) => { span.classList.remove('pressed')})
+  span.addEventListener('mousedown',enableAutospan);
+  span.addEventListener('touchstart',enableAutospan);
+
+function enableAutospan(e){
+
+  if (e.button === 2) {
+    e.preventDefault()
+
+    if( v.span_manual == false) {
+        if( v.span_auto == 0 ){
+            span.classList.add('pressed')
+            spanPressTimer = setTimeout(function() {
+                document.getElementById("ledSpan").classList.remove('off');
+                document.getElementById("ledSpan").classList.add('blink-5hz');
+                v.span_auto = 1
+                clearTimeout(spanPressTimer)
+            },  3000)
+        }
+
+        if( v.span_auto == 1 ){
+            span.classList.add('pressed')
+            spanPressTimer = setTimeout(function() {
+                document.getElementById("ledSpan").classList.remove('off');
+                document.getElementById("ledSpan").classList.remove('blink-5hz');
+                document.getElementById("ledSpan").classList.add('blink-0_5hz');
+                v.span_auto = 2
+                clearTimeout(spanPressTimer)
+            },  100)
+        }
+
+        if( v.span_auto == 2 ){
+            span.classList.add('pressed')
+            spanPressTimer = setTimeout(function() {
+                document.getElementById("ledSpan").classList.add('off');
+                document.getElementById("ledSpan").classList.remove('blink-5hz');
+                document.getElementById("ledSpan").classList.remove('blink-0_5hz');
+                v.span_auto = 0
+                clearTimeout(spanPressTimer)
+            },  100)
+        }
+    }
+  }
+
+}
+
+  var spanLastVal = span.value
+
+  span.addEventListener('knob-move-change', (e) => {
+        v.span_manual = true
+        if( spanLastVal < span.value ){
+            v.span  += 0.1
+        } else {
+            v.span -= 0.1
+        }
+        if( v.span < v.span_min )   v.span = v.span_min;
+        if( v.span > v.span_max )   v.span = v.span_max;
+        
+        if ( span.value == 0 || span.value == 60 ){
+            span.value = 30
+            spanLastVal = span.value
+        }
+
+        document.getElementById('meter').innerHTML = Number.parseFloat(v.span).toFixed(1);
+    
+        span.classList.remove('pressed')
+    clearTimeout(spanPressTimer);
+  })
+
+
+
+
+
+
+
+//----------------------------------------------
+// Setup Mode
+//----------------------------------------------
+var modePressTimer;
+var modeIsAdjusting = false
+mode.addEventListener('knob-move-start', (e) => {})
+mode.addEventListener('knob-move-end', (e) => {
+  v.mode_manual = false
+  clearTimeout(modePressTimer)
+})
+mode.addEventListener('mouseup', (e) => {mode.classList.remove('pressed')})
+mode.addEventListener('touchend', (e) => {mode.classList.remove('pressed')})
+mode.addEventListener('mousedown',changeMode);
+mode.addEventListener('touchstart',changeMode);
+
+function changeMode(e){
+  if (e.button === 2) {
+    e.preventDefault()
+
+    if( v.mode_manual == false) {
+          if( v.mode == 0 ){
+              mode.classList.add('pressed')
+              modePressTimer = setTimeout(function() {
+                  
+                  v.mode = 1
+                  setMode(v.mode) 
+                  mode.value = v.relay1 
+                  document.getElementById('meter').innerHTML = Number.parseFloat(v.relay1).toFixed(1)
+                  clearTimeout(modePressTimer)
+              },  3000)
+          }
+
+          else if( v.mode == 1 ){
+            mode.classList.add('pressed')
+            modePressTimer = setTimeout(function() {
+              
+                  v.mode = 2
+                  setMode(v.mode) 
+                  mode.value = v.relay2 
+                  document.getElementById('meter').innerHTML = Number.parseFloat(v.relay2).toFixed(1)
+
+
+                  clearTimeout(modePressTimer)
+              },  200)
+          }
+
+          else if( v.mode == 2 ){
+            mode.classList.add('pressed')
+            modePressTimer = setTimeout(function() {
+              
+                  v.mode = 3
+                  setMode(v.mode) 
+
+
+                  clearTimeout(modePressTimer)
+              },  100)
+          }
+
+          else if( v.mode == 3 ){
+            mode.classList.add('pressed')
+            modePressTimer = setTimeout(function() {
+              
+              v.mode = 0
+                  setMode(v.mode) 
+
+
+                  clearTimeout(modePressTimer)
+              },  100)
+          }
+      }
+    }
+
+}
+
+
+var modeLastVal = mode.value
+
+mode.addEventListener('knob-move-change', (e) => {
+      
+  
+    if(v.mode == 0 ){
+      document.getElementById('meter').innerHTML = 0.0
+    }
+  
+    if(v.mode == 1 ){
+      
+      v.relay1 = mode.value
+      document.getElementById('meter').innerHTML = Number.parseFloat(v.relay1).toFixed(1)
+
+
+    }
+    if(v.mode == 2 ){
+      
+      v.relay2 = mode.value
+      document.getElementById('meter').innerHTML = Number.parseFloat(v.relay2).toFixed(1)
+
+    }
+    if(v.mode == 3 ){
+      document.getElementById('meter').innerHTML = 0.0
+    }
+  
+      mode.classList.remove('pressed')
+  clearTimeout(modePressTimer);
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  document.getElementById("ledPower").classList.remove('off');
+
+
+  function setMode(m) {
+    console.log(m);
+
+    document.getElementById("r1Yellow").classList.add('off');
+    document.getElementById("r2Yellow").classList.add('off');
+    document.getElementById("ledSpan").classList.add('off');
+    document.getElementById("ledZero").classList.add('off');
+
+
+
+    if( m == 1 ){
+      document.getElementById("r1Yellow").classList.remove('off');
+
+
+    }
+
+    else if( m == 2 ){
+      document.getElementById("r2Yellow").classList.remove('off');
+
+    }
+
+    else if( m == 3 ){
+      document.getElementById("ledSpan").classList.remove('off');
+      document.getElementById("ledZero").classList.remove('off')
+
+
+    }
+    else {
+      document.getElementById('meter').innerHTML = 0.0
+    }
+
+    
+    
+ 
+  }
+
+
+
+
+  </script>
+</body>
+</html>
