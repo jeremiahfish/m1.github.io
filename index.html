@@ -659,6 +659,7 @@ mode.addEventListener('knob-move-change', (e) => {
   
     if(v.mode == 0 ){
       document.getElementById('meter').innerHTML = 40.0
+      clearInterval(calInterval)
     }
   
     if(v.mode == 1 ){
@@ -709,6 +710,8 @@ function reset(){
   document.getElementById("ledSpan").classList.remove('blink-0_5hz');
   document.getElementById("ledZero").classList.remove('blink-5hz');
   document.getElementById("ledZero").classList.remove('blink-0_5hz');
+
+  clearInterval(calInterval)
 
 
 
