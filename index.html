@@ -390,6 +390,7 @@ let v = {
   zero_max: 45,
   relay1: 40,
   relay2: 40,
+  cal : 40
 }
 const mode = document.querySelector('#mode-knob');
 mode.value = 0;
@@ -431,6 +432,7 @@ function enableAutoZero(e){
         if( v.zero_auto == 0 ){
             zero.classList.add('pressed')
             zeroPressTimer = setTimeout(function() {
+                reset()
                 document.getElementById("ledZero").classList.remove('off');
                 document.getElementById("ledZero").classList.add('blink-5hz');
                 v.zero_auto = 1
@@ -445,6 +447,7 @@ function enableAutoZero(e){
                 document.getElementById("ledZero").classList.remove('blink-5hz');
                 document.getElementById("ledZero").classList.add('blink-0_5hz');
                 v.zero_auto = 2
+                simulateZero()
                 clearTimeout(zeroPressTimer)
             },  100)
         }
@@ -457,6 +460,7 @@ function enableAutoZero(e){
                 document.getElementById("ledZero").classList.remove('blink-0_5hz');
                 v.zero_auto = 0
                 clearTimeout(zeroPressTimer)
+                
             },  100)
         }
     }
@@ -516,6 +520,7 @@ function enableAutospan(e){
         if( v.span_auto == 0 ){
             span.classList.add('pressed')
             spanPressTimer = setTimeout(function() {
+                reset()
                 document.getElementById("ledSpan").classList.remove('off');
                 document.getElementById("ledSpan").classList.add('blink-5hz');
                 v.span_auto = 1
@@ -530,6 +535,7 @@ function enableAutospan(e){
                 document.getElementById("ledSpan").classList.remove('blink-5hz');
                 document.getElementById("ledSpan").classList.add('blink-0_5hz');
                 v.span_auto = 2
+                simulateCal()
                 clearTimeout(spanPressTimer)
             },  100)
         }
@@ -542,6 +548,7 @@ function enableAutospan(e){
                 document.getElementById("ledSpan").classList.remove('blink-0_5hz');
                 v.span_auto = 0
                 clearTimeout(spanPressTimer)
+                
             },  100)
         }
     }
@@ -581,6 +588,7 @@ function enableAutospan(e){
 //----------------------------------------------
 // Setup Mode
 //----------------------------------------------
+var calInterval;
 var modePressTimer;
 var modeIsAdjusting = false
 mode.addEventListener('knob-move-start', (e) => {})
@@ -601,6 +609,8 @@ function changeMode(e){
           if( v.mode == 0 ){
               mode.classList.add('pressed')
               modePressTimer = setTimeout(function() {
+
+                  reset()
                   
                   v.mode = 1
                   setMode(v.mode) 
@@ -631,6 +641,10 @@ function changeMode(e){
                   v.mode = 3
                   setMode(v.mode) 
 
+                  simulateCal()
+
+                  
+
 
                   clearTimeout(modePressTimer)
               },  100)
@@ -640,8 +654,9 @@ function changeMode(e){
             mode.classList.add('pressed')
             modePressTimer = setTimeout(function() {
               
-              v.mode = 0
+                  v.mode = 0
                   setMode(v.mode) 
+                  reset()
 
 
                   clearTimeout(modePressTimer)
@@ -686,15 +701,65 @@ mode.addEventListener('knob-move-change', (e) => {
 
 
 
+function reset(){
+
+  v.mode = 0
+  v.zero_manual =  false 
+  v.zero_auto =  0 
+  v.span =  200 
+  v.span_manual =  false 
+  v.span_auto =  0 
+  v.zero =  40 
+  v.zero_manual =  false 
+  v.zero_auto =  0 
+
+  document.getElementById("r1Yellow").classList.add('off');
+  document.getElementById("r2Yellow").classList.add('off');
+  document.getElementById("ledSpan").classList.add('off');
+  document.getElementById("ledZero").classList.add('off');
+
+  document.getElementById("ledSpan").classList.remove('blink-5hz');
+  document.getElementById("ledSpan").classList.remove('blink-0_5hz');
+  document.getElementById("ledZero").classList.remove('blink-5hz');
+  document.getElementById("ledZero").classList.remove('blink-0_5hz');
 
 
 
 
+}
 
 
+function simulateCal(){
+
+  v.cal = 40
+  document.getElementById('meter').innerHTML = Number.parseFloat(v.cal).toFixed(1)
+
+  setTimeout(function(){
+      calInterval = setInterval(function(){
+        v.cal += 0.9
+        
+        document.getElementById('meter').innerHTML = Number.parseFloat(v.cal).toFixed(1)
+
+        if( v.cal > 200 ) {
+          document.getElementById('meter').innerHTML = Number.parseFloat(200).toFixed(1)
+          v.cal = 40
+          clearInterval(calInterval)
+          reset()
+        }
+      }, 100)
+  }, 5000)  
+}
 
 
+function simulateZero(){
 
+
+document.getElementById('meter').innerHTML = Number.parseFloat(40).toFixed(1)
+
+setTimeout(function(){
+  reset()
+}, 5000)  
+}
 
 
   document.getElementById("ledPower").classList.remove('off');
