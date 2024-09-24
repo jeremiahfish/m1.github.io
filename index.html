@@ -728,9 +728,6 @@ function reset(){
 
   clearInterval(calInterval)
 
-
-
-
 }
 
 
@@ -750,6 +747,9 @@ function simulateCal(){
           v.cal = 40
           clearInterval(calInterval)
           reset()
+          if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
+          if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
+
         }
       }, 100)
   }, 5000)  
