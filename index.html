@@ -387,8 +387,8 @@ let v = {
   zero_auto: 0,
   zero_min: 35,
   zero_max: 45,
-  relay1: 40,
-  relay2: 40,
+  relay1: 80,
+  relay2: 96,
   cal : 40
 }
 const mode = document.querySelector('#mode-knob');
@@ -434,6 +434,9 @@ function enableAutoZero(e){
                 reset()
                 document.getElementById("ledZero").classList.remove('off');
                 document.getElementById("ledZero").classList.add('blink-5hz');
+                
+                if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
+                
                 v.zero_auto = 1
                 clearTimeout(zeroPressTimer)
             },  3000)
@@ -448,19 +451,21 @@ function enableAutoZero(e){
                 v.zero_auto = 2
                 simulateZero()
                 clearTimeout(zeroPressTimer)
-            },  100)
+            },  50)
         }
 
         if( v.zero_auto == 2 ){
             zero.classList.add('pressed')
             zeroPressTimer = setTimeout(function() {
                 document.getElementById("ledZero").classList.add('off');
+                if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
                 document.getElementById("ledZero").classList.remove('blink-5hz');
                 document.getElementById("ledZero").classList.remove('blink-0_5hz');
                 v.zero_auto = 0
                 clearTimeout(zeroPressTimer)
+                clearInterval(calInterval)
                 
-            },  100)
+            },  50)
         }
     }
   }
@@ -517,6 +522,9 @@ function enableAutospan(e){
                 reset()
                 document.getElementById("ledSpan").classList.remove('off');
                 document.getElementById("ledSpan").classList.add('blink-5hz');
+
+                if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
+
                 v.span_auto = 1
                 clearTimeout(spanPressTimer)
             },  3000)
@@ -531,19 +539,21 @@ function enableAutospan(e){
                 v.span_auto = 2
                 simulateCal()
                 clearTimeout(spanPressTimer)
-            },  100)
+            },  50)
         }
 
         if( v.span_auto == 2 ){
             span.classList.add('pressed')
             spanPressTimer = setTimeout(function() {
                 document.getElementById("ledSpan").classList.add('off');
+                if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
                 document.getElementById("ledSpan").classList.remove('blink-5hz');
                 document.getElementById("ledSpan").classList.remove('blink-0_5hz');
                 v.span_auto = 0
                 clearTimeout(spanPressTimer)
+                clearInterval(calInterval)
                 
-            },  100)
+            },  50)
         }
     }
   }
@@ -585,6 +595,8 @@ mode.addEventListener('touchend', (e) => {mode.classList.remove('pressed')})
 mode.addEventListener('mousedown',changeMode);
 mode.addEventListener('touchstart',changeMode);
 
+var inSetup = false
+
 function changeMode(e){
   if (e.button === 2) {
     e.preventDefault()
@@ -595,6 +607,7 @@ function changeMode(e){
               modePressTimer = setTimeout(function() {
 
                   reset()
+                  inSetup = true
                   
                   v.mode = 1
                   setMode(v.mode) 
@@ -607,7 +620,7 @@ function changeMode(e){
           else if( v.mode == 1 ){
             mode.classList.add('pressed')
             modePressTimer = setTimeout(function() {
-              
+                inSetup = true
                   v.mode = 2
                   setMode(v.mode) 
                   mode.value = v.relay2 
@@ -615,23 +628,23 @@ function changeMode(e){
 
 
                   clearTimeout(modePressTimer)
-              },  200)
+              },  50)
           }
 
           else if( v.mode == 2 ){
             mode.classList.add('pressed')
             modePressTimer = setTimeout(function() {
-              
+              inSetup = true
                   v.mode = 3
                   setMode(v.mode) 
 
-                  simulateCal()
+                  //simulateCal()
 
                   
 
 
                   clearTimeout(modePressTimer)
-              },  100)
+              },  50)
           }
 
           else if( v.mode == 3 ){
@@ -641,10 +654,11 @@ function changeMode(e){
                   v.mode = 0
                   setMode(v.mode) 
                   reset()
+                  inSetup = false
 
-
+                  clearInterval(calInterval)
                   clearTimeout(modePressTimer)
-              },  100)
+              },  50)
           }
       }
     }
@@ -658,7 +672,7 @@ mode.addEventListener('knob-move-change', (e) => {
       
   
     if(v.mode == 0 ){
-      document.getElementById('meter').innerHTML = 40.0
+      document.getElementById('meter').innerHTML = Number.parseFloat(40.0).toFixed(1)
       clearInterval(calInterval)
     }
   
