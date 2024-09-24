@@ -757,13 +757,11 @@ function simulateCal(){
 
 
 function simulateZero(){
+	document.getElementById('meter').innerHTML = Number.parseFloat(40).toFixed(1)
 
-
-document.getElementById('meter').innerHTML = Number.parseFloat(40).toFixed(1)
-
-setTimeout(function(){
-  reset()
-}, 5000)  
+	setTimeout(function(){
+		reset()
+	}, 5000)  
 }
 
 
@@ -771,7 +769,6 @@ setTimeout(function(){
 
 
   function setMode(m) {
-    console.log(m);
 
     document.getElementById("r1Yellow").classList.add('off');
     document.getElementById("r2Yellow").classList.add('off');
