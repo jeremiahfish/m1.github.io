@@ -761,6 +761,8 @@ function simulateZero(){
 
 	setTimeout(function(){
 		reset()
+		if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
+		if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
 	}, 5000)  
 }
 
