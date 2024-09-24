@@ -432,6 +432,7 @@ function enableAutoZero(e){
             zero.classList.add('pressed')
             zeroPressTimer = setTimeout(function() {
                 reset()
+                clearInterval(calInterval)
                 document.getElementById("ledZero").classList.remove('off');
                 document.getElementById("ledZero").classList.add('blink-5hz');
                 
