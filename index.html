@@ -427,6 +427,8 @@ function enableAutoZero(e){
   if (e.button === 2) {
     e.preventDefault()
 
+
+
     if( v.zero_manual == false) {
         if( v.zero_auto == 0 ){
             zero.classList.add('pressed')
@@ -602,6 +604,8 @@ function changeMode(e){
   if (e.button === 2) {
     e.preventDefault()
 
+	console.log(v.mode)
+
     if( v.mode_manual == false) {
           if( v.mode == 0 ){
               mode.classList.add('pressed')
@@ -657,6 +661,8 @@ function changeMode(e){
                   reset()
                   inSetup = false
 
+				  
+
                   clearInterval(calInterval)
                   clearTimeout(modePressTimer)
               },  50)
@@ -675,6 +681,8 @@ mode.addEventListener('knob-move-change', (e) => {
     if(v.mode == 0 ){
       document.getElementById('meter').innerHTML = Number.parseFloat(40.0).toFixed(1)
       clearInterval(calInterval)
+	  clearInterval(calInterval)
+	  reset()
     }
   
     if(v.mode == 1 ){
@@ -692,6 +700,8 @@ mode.addEventListener('knob-move-change', (e) => {
     }
     if(v.mode == 3 ){
       document.getElementById('meter').innerHTML = 40.0
+	  clearInterval(calInterval)
+	  reset()
     }
   
       mode.classList.remove('pressed')
@@ -798,6 +808,8 @@ function simulateZero(){
     }
     else {
       document.getElementById('meter').innerHTML = 40.0
+	  clearInterval(calInterval)
+	  reset()
     }
 
     
