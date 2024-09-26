@@ -438,7 +438,7 @@ function enableAutoZero(e){
                 document.getElementById("ledZero").classList.remove('off');
                 document.getElementById("ledZero").classList.add('blink-5hz');
                 
-                if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
+                if( inSetup == true) document.getElementById("ledSpan").classList.remove('off');
                 
                 v.zero_auto = 1
                 clearTimeout(zeroPressTimer)
@@ -461,7 +461,7 @@ function enableAutoZero(e){
             zero.classList.add('pressed')
             zeroPressTimer = setTimeout(function() {
                 document.getElementById("ledZero").classList.add('off');
-                if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
+                if( inSetup == true) document.getElementById("ledZero").classList.remove('off');
                 document.getElementById("ledZero").classList.remove('blink-5hz');
                 document.getElementById("ledZero").classList.remove('blink-0_5hz');
                 v.zero_auto = 0
@@ -526,7 +526,7 @@ function enableAutospan(e){
                 document.getElementById("ledSpan").classList.remove('off');
                 document.getElementById("ledSpan").classList.add('blink-5hz');
 
-                if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
+                if( inSetup == true) document.getElementById("ledZero").classList.remove('off');
 
                 v.span_auto = 1
                 clearTimeout(spanPressTimer)
@@ -549,7 +549,7 @@ function enableAutospan(e){
             span.classList.add('pressed')
             spanPressTimer = setTimeout(function() {
                 document.getElementById("ledSpan").classList.add('off');
-                if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
+                if( inSetup == true) document.getElementById("ledSpan").classList.remove('off');
                 document.getElementById("ledSpan").classList.remove('blink-5hz');
                 document.getElementById("ledSpan").classList.remove('blink-0_5hz');
                 v.span_auto = 0
@@ -699,7 +699,7 @@ mode.addEventListener('knob-move-change', (e) => {
 
     }
     if(v.mode == 3 ){
-      document.getElementById('meter').innerHTML = 40.0
+      document.getElementById('meter').innerHTML = Number.parseFloat(40).toFixed(1)
 	  clearInterval(calInterval)
 	  reset()
     }
@@ -757,8 +757,8 @@ function simulateCal(){
           v.cal = 40
           clearInterval(calInterval)
           reset()
-          if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
-          if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
+          if( inSetup == true) document.getElementById("ledSpan").classList.remove('off');
+          if( inSetup == true) document.getElementById("ledZero").classList.remove('off');
 
         }
       }, 100)
@@ -771,8 +771,8 @@ function simulateZero(){
 
 	setTimeout(function(){
 		reset()
-		if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
-		if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
+		if( inSetup == true) document.getElementById("ledSpan").classList.remove('off');
+		if( inSetup == true) document.getElementById("ledZero").classList.remove('off');
 	}, 5000)  
 }
 
@@ -807,7 +807,7 @@ function simulateZero(){
 
     }
     else {
-      document.getElementById('meter').innerHTML = 40.0
+      document.getElementById('meter').innerHTML = Number.parseFloat(40).toFixed(1)
 	  clearInterval(calInterval)
 	  reset()
     }
