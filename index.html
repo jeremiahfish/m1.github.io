@@ -726,7 +726,7 @@ mode.addEventListener('knob-move-change', (e) => {
 
     }
     if(v.mode == 3 ){
-      document.getElementById('meter').innerHTML = 40.0
+      document.getElementById('meter').innerHTML = Number.parseFloat(40).toFixed(1)
 	  clearInterval(calInterval)
 	  reset()
     }
@@ -834,7 +834,7 @@ function simulateZero(){
 
     }
     else {
-      document.getElementById('meter').innerHTML = 40.0
+      document.getElementById('meter').innerHTML = Number.parseFloat(40).toFixed(1)
 	  clearInterval(calInterval)
 	  reset()
     }
