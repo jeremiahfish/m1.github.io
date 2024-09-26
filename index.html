@@ -132,11 +132,6 @@
 
 <style>
 
-bodyb {
-    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCI+CjxwYXRoIGZpbGw9IiNmZjZmMDIiIGQ9Ik0zMSA3LjAwMmwxMyAxLjY4NkwzMy4yOTYgMTkgMzEgNy4wMDJ6TTE3IDQxTDQgMzkuMzE0IDE0LjcwNCAyOSAxNyA0MXoiPjwvcGF0aD48cGF0aCBmaWxsPSIjZmY2ZjAwIiBkPSJNOCAyNGMwLTguODM3IDcuMTYzLTE2IDE2LTE2IDEuMDI0IDAgMi4wMjEuMTA2IDIuOTkyLjI5bC42OTMtMy44NjVDMjYuNTI1IDQuMTEyIDI1LjI2MiA0LjAwNSAyNCA0LjAwNWMtMTEuMDUzIDAtMjAgOC45NDctMjAgMjAgMCA0Ljg0NCAxLjY4NiA5LjQ3NCA0Ljg0NCAxMy4wNTFsMy4wMzctMi42MjlDOS40NjggMzEuNjI1IDggMjcuOTg3IDggMjR6TTM5LjQ3MyAxMS4yNjdsLTMuMTQzIDIuNTM3QzM4LjYyMiAxNi41NzIgNDAgMjAuMTI1IDQwIDI0YzAgOC44MzctNy4xNjMgMTYtMTYgMTYtMS4wMjkgMC0yLjAzMy0uMTA2LTMuMDA4LS4yOTJsLS42NzYgMy43NzFjMS4yNjIuMjEgMi41MjUuMzE3IDMuNjg0LjMxNyAxMS4wNTMgMCAyMC04Ljk0NyAyMC0yMEM0NCAxOS4zNzUgNDIuNDIxIDE0Ljg0OCAzOS40NzMgMTEuMjY3eiI+PC9wYXRoPgo8L3N2Zz4=") 16 16, pointer;
-
-}
-
 
 
 
@@ -151,8 +146,8 @@ bodyb {
     background-repeat: no-repeat;
     
     position: absolute;
-    top: 400px;
-    left: 100px;
+    top: 50px;
+    left: 570px;
 
     
     width: 400px;
@@ -183,13 +178,38 @@ bodyb {
 
 
    input-knob {
-    width: 64px;
+	width: 80px;
+    height: 80px;
     padding: 0px;
+    opacity: 0.7;
 
     background: transparent;
-    transition: scale 0.2s ease-out;
+    transition: all 0.2s ease-out;
     transition-delay: 0.0s;
   }
+
+
+
+  input-knob:hover {
+
+}
+
+
+
+
+input-knob:focus {
+}
+
+input-knob:active {
+
+}
+
+
+  input-knob:active {
+    opacity: 1;
+ 
+}
+
   input-knob.pressed {
 
     scale: 0.9;
@@ -203,21 +223,28 @@ bodyb {
 
   input-knob::part(rotator) {
     box-sizing: border-box;
-    background-image: radial-gradient(circle at 50% 50%, #7a7a7a, #6b6b6b), radial-gradient(circle at 50% 53%, #ffffff, #ffffff00),
-    radial-gradient(ellipse at center,  rgba(255,255,255,0) 1%,rgba(255,255,255,0) 42%,rgba(255,255,255,1) 43%,rgba(255,255,255,0) 46%,rgba(255,255,255,0) 100%);
-    border: 1.5px dashed rgb(81, 81, 81);
-    outline: 2px solid rgb(74, 74, 74);
+
     border-radius: 100%;
-    width: 64px;
-    height: 64px;
+
+
+    background: url('dial.png')50% 50% no-repeat;
+    background-size: 70px 70px;
+    width: 80px;
+    height: 80px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
   }
 
   .mark {
-    display: inline-block;
+    /*
+	display: inline-block;
     width: 100%;
     text-align: center;
     font: bold 120% monospace;
     color: rgb(214, 214, 214);
+	*/
+
+	color: #ffffff00;
   }
 
 
@@ -326,7 +353,7 @@ bodyb {
       
       
       <!-- Mode Knob -->
-      <div style="margin-top: 24px; margin-left: 160px;">
+      <div style="margin-top: 14px; margin-left: 150px;">
         <input-knob id="mode-knob"   name="mode-knob"  value="40" scale="30" min="40" max="200">
           <div class="mark">&bull;</div>
         </input-knob>
@@ -334,7 +361,7 @@ bodyb {
 
 
       <!-- Span Knob -->
-      <div style="margin-top: 182px; margin-left: 490px;">
+      <div style="margin-top: 162px; margin-left: 490px;">
         <input-knob id="span-knob"   name="span-knob" value=220 scale=10 min=0 max=240>
           <div class="mark">&bull;</div>
         </input-knob>
@@ -342,7 +369,7 @@ bodyb {
 
 
       <!-- Zero Knob -->
-      <div style="margin-top: 20px; margin-left: 490px;">
+      <div style="margin-top: 10px; margin-left: 490px;">
         <input-knob id="zero-knob"   name="zero-knob" value="30" scale="10" min="35" max="45">
           <div class="mark">&bull;</div>
         </input-knob>
@@ -438,7 +465,7 @@ function enableAutoZero(e){
                 document.getElementById("ledZero").classList.remove('off');
                 document.getElementById("ledZero").classList.add('blink-5hz');
                 
-                if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
+                if( inSetup == true) document.getElementById("ledSpan").classList.remove('off');
                 
                 v.zero_auto = 1
                 clearTimeout(zeroPressTimer)
@@ -461,7 +488,7 @@ function enableAutoZero(e){
             zero.classList.add('pressed')
             zeroPressTimer = setTimeout(function() {
                 document.getElementById("ledZero").classList.add('off');
-                if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
+                if( inSetup == true) document.getElementById("ledZero").classList.remove('off');
                 document.getElementById("ledZero").classList.remove('blink-5hz');
                 document.getElementById("ledZero").classList.remove('blink-0_5hz');
                 v.zero_auto = 0
@@ -526,7 +553,7 @@ function enableAutospan(e){
                 document.getElementById("ledSpan").classList.remove('off');
                 document.getElementById("ledSpan").classList.add('blink-5hz');
 
-                if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
+                if( inSetup == true) document.getElementById("ledZero").classList.remove('off');
 
                 v.span_auto = 1
                 clearTimeout(spanPressTimer)
@@ -549,7 +576,7 @@ function enableAutospan(e){
             span.classList.add('pressed')
             spanPressTimer = setTimeout(function() {
                 document.getElementById("ledSpan").classList.add('off');
-                if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
+                if( inSetup == true) document.getElementById("ledSpan").classList.remove('off');
                 document.getElementById("ledSpan").classList.remove('blink-5hz');
                 document.getElementById("ledSpan").classList.remove('blink-0_5hz');
                 v.span_auto = 0
@@ -757,8 +784,8 @@ function simulateCal(){
           v.cal = 40
           clearInterval(calInterval)
           reset()
-          if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
-          if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
+          if( inSetup == true) document.getElementById("ledSpan").classList.remove('off');
+          if( inSetup == true) document.getElementById("ledZero").classList.remove('off');
 
         }
       }, 100)
@@ -771,8 +798,8 @@ function simulateZero(){
 
 	setTimeout(function(){
 		reset()
-		if( inSetup = true) document.getElementById("ledSpan").classList.remove('off');
-		if( inSetup = true) document.getElementById("ledZero").classList.remove('off');
+		if( inSetup == true) document.getElementById("ledSpan").classList.remove('off');
+		if( inSetup == true) document.getElementById("ledZero").classList.remove('off');
 	}, 5000)  
 }
 
